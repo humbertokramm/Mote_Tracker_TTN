@@ -65,6 +65,7 @@ void PIN_MANAGER_Initialize(void)
     // B
     SWITCH_1_TRIS = INPUT;
     SWITCH_2_TRIS = INPUT;
+    SW_UART_RX_TRIS = INPUT;
     LCD_RESET_TRIS = OUTPUT;
     LCD_RDN_EN_TRIS = OUTPUT;
     LCD_CS_TRIS = OUTPUT;

@@ -132,8 +132,10 @@
 /******** -6- *************************/
 // Not Used
 /******** -7- *************************/
-// Not Used
-
+#define SW_UART_RX_PORT    PORTBbits.RB7
+#define SW_UART_RX_LAT     LATBbits.LATB7
+#define SW_UART_RX_TRIS    TRISBbits.TRISB7
+#define SW_UART_RX_IOC     INTCONbits.INT0IE
 /******** -C- *************************/
 #define LATC_INIT       0b00000000  // LAT Init value
 #define TRISC_INIT      0b11111111  // TRIS Init value  (0=Output)

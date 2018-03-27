@@ -78,6 +78,10 @@ void interrupt INTERRUPT_InterruptManager (void)
     {
         CMP1_ISR();
     }
+    else if(INTCONbits.IOCIE == 1 && INTCONbits.IOCIF == 1 && IOCBbits.IOCB7 == 1)
+    {
+        //SW_EUSART_Receive_ISR();
+    }
     else
     {
         //Unhandled Interrupt
