@@ -56,7 +56,7 @@ typedef enum Stops_t
 };
 enum Stops_t stops;
 
-
+//
 uint8_t n_bit;
 uint8_t rx_data;
 uint8_t buffer_rx[NUM_BUFFER_RX];
