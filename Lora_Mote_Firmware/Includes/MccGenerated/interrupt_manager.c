@@ -78,9 +78,16 @@ void interrupt INTERRUPT_InterruptManager (void)
     {
         CMP1_ISR();
     }
-    else if(INTCONbits.IOCIE == 1 && INTCONbits.IOCIF == 1 && IOCBbits.IOCB7 == 1)
+    else if(INTCONbits.IOCIE == 1 && INTCONbits.IOCIF == 1)
     {
-        //SW_EUSART_Receive_ISR();
+        INTCONbits.IOCIF = 0;
+        
+        if(IOCBbits.IOCB7 == 1)
+        {
+            //SW_EUSART_Receive_ISR();
+            if(SW_UART_RX_PORT) LED_RED_PORT = LED_ON;
+            else LED_RED_PORT = LED_OFF;
+        }
     }
     else
     {

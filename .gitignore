@@ -11,3 +11,5 @@
 *.rlf
 *.sym
 *.hxl
+*.xml
+*.mk

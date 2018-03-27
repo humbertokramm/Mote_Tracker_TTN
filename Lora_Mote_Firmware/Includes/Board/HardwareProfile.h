@@ -97,12 +97,12 @@
 #define LED_RED_PORT    PORTAbits.RA7
 #define LED_RED_LAT     LATAbits.LATA7
 #define LED_RED_TRIS    TRISAbits.TRISA7
-
 /******** -B- *************************/
 #define LATB_INIT       0b00000000  // LAT Init value
 #define TRISB_INIT      0b11111111  // TRIS Init value  (0=Output)
 #define ANSELB_INIT     0b00000000  // ANSEL Init value (1=Analog)
 #define ODCB_INIT       0b00000000  // ODC Init value   (1=Open Drain)
+#define PULL_UP_B       INTCON2bits.nRBPU
 /******** -0- *************************/
 #define SWITCH_2_PORT    PORTBbits.RB0
 #define SWITCH_2_LAT     LATBbits.LATB0
@@ -222,11 +222,11 @@
 /*******************************************************************/
 /******** Peripheral  *************************/
 /*******************************************************************/
-#define IOC_ENABLE  INTCONbits.IOCIE
-#define IOC_FLAG    INTCONbits.IOCIF
-#define INT0_FLAG    INTCONbits.INT0IF
-#define INT1_FLAG    INTCON3bits.INT1IF
-
+#define IOC_ENABLE      INTCONbits.IOCIE
+#define IOC_FLAG        INTCONbits.IOCIF
+#define INT0_FLAG       INTCONbits.INT0IF
+#define INT1_FLAG       INTCON3bits.INT1IF
+#define IOCB7_ENABLE    IOCBbits.IOCB7
 /*******************************************************************/
 /******** General  *************************/
 /*******************************************************************/
@@ -244,5 +244,8 @@
 
 #define ANALOG  1
 #define DIGITAL 0
+
+#define NO_PULL  1
+#define WITH_PULL 0
 
 #endif  //HARDWARE_PROFILE__H
