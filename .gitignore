@@ -1,0 +1,13 @@
+
+*.sdb
+*.pre
+*.d
+*.p1
+*.elf
+*.cmf
+*.map
+*.mum
+*.obj
+*.rlf
+*.sym
+*.hxl

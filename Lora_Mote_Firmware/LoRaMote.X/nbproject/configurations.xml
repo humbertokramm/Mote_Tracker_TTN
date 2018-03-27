@@ -16,6 +16,7 @@
         <itemPath>../Includes/Drivers/input.h</itemPath>
         <itemPath>../Includes/Drivers/SSD1306oLED.h</itemPath>
         <itemPath>../Includes/Drivers/TMRapp.h</itemPath>
+        <itemPath>../Includes/Drivers/swUart.h</itemPath>
       </logicalFolder>
       <logicalFolder name="MccGenerated"
                      displayName="MccGenerated"
@@ -60,6 +61,7 @@
         <itemPath>../Includes/Drivers/buttons.c</itemPath>
         <itemPath>../Includes/Drivers/TMRapp.c</itemPath>
         <itemPath>../Includes/Drivers/SSD1306oLED.c</itemPath>
+        <itemPath>../Includes/Drivers/swUart.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="MCC Generated" projectFiles="true">
         <itemPath>../Includes/MccGenerated/eusart.c</itemPath>
@@ -108,7 +110,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>ICD3PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
-        <languageToolchainVersion>1.35</languageToolchainVersion>
+        <languageToolchainVersion>1.41</languageToolchainVersion>
         <platform>4</platform>
       </toolsSet>
       <compileType>
@@ -123,6 +125,8 @@
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
+        <subordinates>
+        </subordinates>
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
@@ -493,7 +497,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
-        <languageToolchainVersion>1.20</languageToolchainVersion>
+        <languageToolchainVersion>1.41</languageToolchainVersion>
         <platform>4</platform>
       </toolsSet>
       <compileType>
@@ -508,6 +512,8 @@
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
+        <subordinates>
+        </subordinates>
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>
@@ -836,7 +842,7 @@
         <targetPluginBoard></targetPluginBoard>
         <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
-        <languageToolchainVersion>1.20</languageToolchainVersion>
+        <languageToolchainVersion>1.41</languageToolchainVersion>
         <platform>4</platform>
       </toolsSet>
       <compileType>
@@ -866,6 +872,8 @@
           <parseOnProdLoad>false</parseOnProdLoad>
           <alternateLoadableFile></alternateLoadableFile>
         </loading>
+        <subordinates>
+        </subordinates>
       </compileType>
       <makeCustomizationType>
         <makeCustomizationPreStepEnabled>false</makeCustomizationPreStepEnabled>

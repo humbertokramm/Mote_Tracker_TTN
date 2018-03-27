@@ -23,8 +23,8 @@
 #define NUM_BITS_SILENT 22
 
 //	Amostragem no ":" (dois pontos)
-//  ------| START |---:---|   D1  |---:---|   D3  |---:---|   D5  |---:---|   D7  |---:---|---:---|---:---|---:--- ...   0xAA
-//  	  |:------|   D0  |---:---|  D2   |---:---|  D4   |---:---|  D6   |---:---|-Parity|       |       |       
+//  ------| START_UA |---:---|   D1  |---:---|   D3  |---:---|   D5  |---:---|   D7  |---:---|---:---|---:---|---:--- ...   0xAA
+//  	  |:---------|   D0  |---:---|  D2   |---:---|  D4   |---:---|  D6   |---:---|-Parity|       |       |       
 
 // Tempo para o bitrate, em micro segundos
 
@@ -34,29 +34,28 @@
 typedef enum Status_t
 {
 	SILENT,
-	START,
+	START_UA,
 	N_BIT,
 	PARITY,
-	STOP,
+	STOP_UA
 };
+enum Status_t status;
 
 typedef enum Parity_t
 {
 	NONE,
 	ODD,
-	EVEN,
+	EVEN
 };
-Parity_t parity;
+enum Parity_t  parity;
 
 typedef enum Stops_t
 {
 	STOPS1,
-	STOPS2,
+	STOPS2
 };
-Stops_t stops;
+enum Stops_t stops;
 
-
-Status_t status;
 
 uint8_t n_bit;
 uint8_t rx_data;
@@ -89,7 +88,7 @@ void InterruptPinRX(void)
 	{
 		if(SW_UART_RX_PORT == 0)
 		{
-			status = START;
+			status = START_UA;
 			// Carrega o timer com o tempo de um bit e meio para pegar a amostragem quando no meio do intervalo bit.
 			reloadTimer(TIME_HALF + TIME_BIT);
 		}
@@ -117,7 +116,7 @@ void InterruptTimerUART(void)
 		reloadTimer(TIME_BIT);
 	}
 	break;
-	case START:
+	case START_UA:
 		countBitsSilent = 0;
 		n_bit = 0;
 		cs = 0;
@@ -130,7 +129,7 @@ void InterruptTimerUART(void)
 		// Seta o bit recebido
 		if( SW_UART_RX_PORT == 1 )
 		{
-			rx_data |= mask
+			rx_data |= mask;
 			cs ++;
 		}
 		else
@@ -152,10 +151,10 @@ void InterruptTimerUART(void)
 		{}
 		else
 		{}
-		status = STOP;
+		status = STOP_UA;
 		reloadTimer(TIME_BIT);
 	break;
-	case STOP:
+	case STOP_UA:
 		buffer_rx[countRX] = rx_data;
 		countRX ++;
 		status = SILENT;
