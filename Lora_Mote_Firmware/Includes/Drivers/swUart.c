@@ -9,6 +9,7 @@
 
 #include "swUart.h"
 #include "stdint.h"
+#include "HardwareProfile.h"
 
 // Número de bits do data format
 #define NUM_BITS 8
@@ -47,7 +48,7 @@ typedef enum Parity_t
 };
 Parity_t parity;
 
-typedef enum STOP_BITS
+typedef enum Stops_t
 {
 	STOPS1,
 	STOPS2,
@@ -59,7 +60,7 @@ Status_t status;
 
 uint8_t n_bit;
 uint8_t rx_data;
-uint8_t buffer_rx[NUM_BUFFER_RX]
+uint8_t buffer_rx[NUM_BUFFER_RX];
 uint8_t cs;
 uint8_t countRX;
 uint8_t countBitsSilent;
@@ -86,11 +87,11 @@ void InterruptPinRX(void)
 {
 	if(status == SILENT)
 	{
-		if(pinRX == 0)
+		if(SW_UART_RX_PORT == 0)
 		{
 			status = START;
 			// Carrega o timer com o tempo de um bit e meio para pegar a amostragem quando no meio do intervalo bit.
-			reloadTimer(timerRX, TIME_HALF + TIME_BIT)
+			reloadTimer(TIME_HALF + TIME_BIT);
 		}
 	}
 	// Limpar a interupção
@@ -127,7 +128,7 @@ void InterruptTimerUART(void)
 	case N_BIT:
 		mask = 0x01 << n_bit;
 		// Seta o bit recebido
-		if( pinRX == 1 )
+		if( SW_UART_RX_PORT == 1 )
 		{
 			rx_data |= mask
 			cs ++;
@@ -135,10 +136,10 @@ void InterruptTimerUART(void)
 		else
 		{
 			// Redundante... 
-			rx_data &= ~mask
+			rx_data &= ~mask;
 		}
 		n_bit ++;
-		if( n_Bit == NUM_BITS )
+		if( n_bit == NUM_BITS )
 		{
 			status = PARITY;
 		}
@@ -147,7 +148,7 @@ void InterruptTimerUART(void)
 	case PARITY:
 		// Deve Usar cs para fazer a verificação da paridade com o bit recebido
 		// No caso pode ser negligenciado no momento
-		if( pinRX == 0 )
+		if( SW_UART_RX_PORT == 0 )
 		{}
 		else
 		{}
@@ -167,4 +168,19 @@ void InterruptTimerUART(void)
 	break;
 	}
 	clearInterruptTimerUART();
+}
+
+void clearInterruptTimerUART(void)
+{
+    
+}
+
+void reloadTimer(uint8_t setTimerValue)
+{
+    
+}
+
+void clearInterruptPinRX(void)
+{
+    
 }
