@@ -191,11 +191,13 @@ void reloadTimer(uint8_t setTimerValue)
     {
         case TIME_BIT:
             //Timer0 Registers Prescaler= 8 - TMR0 Preset = 100 - Freq = 9615.38 Hz - Period = 0.000104 seconds
-            TMR0 = 93;//100;
+            //Por aferição será usado 110
+            TMR0 = 110;//100;
             break;
         case TIME_ONE_AND_HALF:
             //Timer0 Registers Prescaler= 8 - TMR0 Preset = 25 - Freq = 6493.51 Hz - Period = 0.000154 seconds
-            TMR0 = 25;
+            //Por aferição será usado 34
+            TMR0 = 34;//25;
             break;
         default:
             TMR0 = 0;
