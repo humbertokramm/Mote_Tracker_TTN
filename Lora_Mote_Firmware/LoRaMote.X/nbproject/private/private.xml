@@ -6,8 +6,11 @@
         <group>
             <file>file:/C:/Users/hkramm/Documents/GitHub/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/Board/HardwareProfile.h</file>
             <file>file:/C:/Users/hkramm/Documents/GitHub/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/Drivers/swUart.c</file>
+            <file>file:/C:/Users/hkramm/Documents/GitHub/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/MccGenerated/tmr1.h</file>
             <file>file:/C:/Users/hkramm/Documents/GitHub/Mote_Tracker_TTN/Lora_Mote_Firmware/LoRaMote.X/main.c</file>
+            <file>file:/C:/Users/hkramm/Documents/GitHub/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/MccGenerated/tmr1.c</file>
             <file>file:/C:/Users/hkramm/Documents/GitHub/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/MccGenerated/interrupt_manager.c</file>
+            <file>file:/C:/Users/hkramm/Documents/GitHub/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/MccGenerated/tmr2.c</file>
             <file>file:/C:/Users/hkramm/Documents/GitHub/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/MccGenerated/pin_manager.c</file>
             <file>file:/C:/Users/hkramm/Documents/GitHub/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/Board/MOTEapp.c</file>
         </group>

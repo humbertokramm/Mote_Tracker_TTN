@@ -64,7 +64,8 @@ void PIN_MANAGER_Initialize(void)
     LED_RED_TRIS = OUTPUT; 
     // B
     PULL_UP_B = WITH_PULL;
-    IOCB7_ENABLE = ENABLE;  //Liga a interrupção do Pino do RX da serial por SW
+    SW_UART_RX_IOC = ENABLE;    //Liga a interrupção do Pino do RX da serial por SW
+    IOC_ENABLE = ENABLE;        //Interrupção usada na Serial SW
     SWITCH_1_TRIS = INPUT;
     SWITCH_2_TRIS = INPUT;
     SW_UART_RX_TRIS = INPUT;

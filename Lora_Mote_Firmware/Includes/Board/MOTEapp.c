@@ -1187,10 +1187,10 @@ static uint8_t moteApp_GoToSleep(void)
     USB_DET_ANSEL = 1;
     // Prepare IOC to wake us up
     USB_DET_EN = 1;      // Enables CMP1 interrupt.
-    SWITCH_1_IOC = 1;
-    SWITCH_2_IOC = 1;
+    SWITCH_1_IT1 = 1;
+    SWITCH_2_IT0 = 1;
     MODULE_WAKE_IOC = 1;
-    IOC_ENABLE = 1;
+    //IOC_ENABLE = 1;//Interrupção removida, pois será usada na serial por SW
     // Dummy Reads to Establish IOC level
     status = SWITCH_1_PORT;
     status = SWITCH_2_PORT;
@@ -1201,7 +1201,7 @@ static uint8_t moteApp_GoToSleep(void)
         WDTCONbits.SWDTEN = 1;
     }
     
-    IOC_FLAG = 0;
+    //IOC_FLAG = 0; //Interrupção removida, pois será usada na serial por SW
     INT0_FLAG = 0;
     INT1_FLAG = 0;
     USB_DET_FLAG = 0;
@@ -1212,18 +1212,18 @@ static uint8_t moteApp_GoToSleep(void)
     WDTCONbits.SWDTEN = 0;
     EUSART_FlushBuffer();
     // Disable IOC
-    IOC_ENABLE = 0;
-    SWITCH_1_IOC = 0;
-    SWITCH_2_IOC = 0;
+    //IOC_ENABLE = 0; //Interrupção removida, pois será usada na serial por SW
+    SWITCH_1_IT1 = 0;
+    SWITCH_2_IT0 = 0;
     MODULE_WAKE_IOC = 0;
     PIE2bits.C1IE = 0;
     GIE = 1;
 
     PIN_MANAGER_Initialize();
     // Process Wake Up Event
-    if ((IOC_FLAG)||(INT0_FLAG)||(INT1_FLAG)||(USB_DET_FLAG))
+    if (/*(IOC_FLAG)||*/(INT0_FLAG)||(INT1_FLAG)||(USB_DET_FLAG))
     {   // PushButton or Module IOC woke us
-        IOC_FLAG = 0;
+        //IOC_FLAG = 0; //Interrupção removida, pois será usada na serial por SW
         INT0_FLAG = 0;
         INT1_FLAG = 0;
         status = 1;

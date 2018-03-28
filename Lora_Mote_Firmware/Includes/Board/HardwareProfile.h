@@ -107,12 +107,12 @@
 #define SWITCH_2_PORT    PORTBbits.RB0
 #define SWITCH_2_LAT     LATBbits.LATB0
 #define SWITCH_2_TRIS    TRISBbits.TRISB0
-#define SWITCH_2_IOC     INTCONbits.INT0IE
+#define SWITCH_2_IT0     INTCONbits.INT0IE
 /******** -1- *************************/
 #define SWITCH_1_PORT    PORTBbits.RB1
 #define SWITCH_1_LAT     LATBbits.LATB1
 #define SWITCH_1_TRIS    TRISBbits.TRISB1
-#define SWITCH_1_IOC     INTCON3bits.INT1IE
+#define SWITCH_1_IT1     INTCON3bits.INT1IE
 /******** -2- *************************/
 #define LCD_RESET_PORT    PORTBbits.RB2
 #define LCD_RESET_LAT     LATBbits.LATB2
@@ -135,7 +135,7 @@
 #define SW_UART_RX_PORT    PORTBbits.RB7
 #define SW_UART_RX_LAT     LATBbits.LATB7
 #define SW_UART_RX_TRIS    TRISBbits.TRISB7
-#define SW_UART_RX_IOC     INTCONbits.INT0IE
+#define SW_UART_RX_IOC     IOCBbits.IOCB7
 /******** -C- *************************/
 #define LATC_INIT       0b00000000  // LAT Init value
 #define TRISC_INIT      0b11111111  // TRIS Init value  (0=Output)
@@ -222,11 +222,12 @@
 /*******************************************************************/
 /******** Peripheral  *************************/
 /*******************************************************************/
+//Usado na Serial SW
 #define IOC_ENABLE      INTCONbits.IOCIE
 #define IOC_FLAG        INTCONbits.IOCIF
+//Usado nas Chaves
 #define INT0_FLAG       INTCONbits.INT0IF
 #define INT1_FLAG       INTCON3bits.INT1IF
-#define IOCB7_ENABLE    IOCBbits.IOCB7
 /*******************************************************************/
 /******** General  *************************/
 /*******************************************************************/
