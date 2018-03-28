@@ -193,7 +193,7 @@ void TMR0_StopTimer(void);
     }
     </code>
 */
-uint16_t TMR0_ReadTimer(void);
+uint8_t TMR0_ReadTimer(void);
 
 /**
   @Summary
@@ -232,11 +232,49 @@ uint16_t TMR0_ReadTimer(void);
     }
     </code>
 */
-void TMR0_WriteTimer(uint16_t timerVal);
+void TMR0_WriteTimer(uint8_t timerVal);
 
 /**
   @Summary
-    Reload the TMR0 register.
+    Writes the TMR0 register.
+
+  @Description
+    This function writes the TMR0 register.
+    This function must be called after the initialization of TMR0.
+
+  @Preconditions
+    Initialize  the TMR0 before calling this function.
+
+  @Param
+    timerVal - Value to write into TMR0 register.
+
+  @Returns
+    None
+
+  @Example
+    <code>
+    #define PERIOD 0x80
+    #define ZERO   0x00
+
+    while(1)
+    {
+        // Read the TMR0 register
+        if(ZERO == TMR0_ReadTimer())
+        {
+            // Do something else...
+
+            // Write the TMR0 register
+            TMR0_WriteTimer(PERIOD);
+        }
+
+        // Do something else...
+    }
+    </code>
+*/
+void TMR0_SetReload(uint8_t timerVal);
+/**
+  @Summary
+    Reload the Reload register.
 
   @Description
     This function reloads the TMR0 register.
@@ -272,84 +310,6 @@ void TMR0_Reload(void);
 
 /**
   @Summary
-    Starts the single pulse acquisition in TMR0 gate operation.
-
-  @Description
-    This function starts the single pulse acquisition in TMR0 gate operation.
-    This function must be used when the TMR0 gate is enabled.
-
-  @Preconditions
-    Initialize  the TMR0 with gate enable before calling this function.
-
-  @Param
-    None
-
-  @Returns
-    None
-
-  @Example
-    <code>
-    uint16_t xVal;
-    uint16_t yVal;
-
-    // enable TMR0 singlepulse mode
-    TMR0_StartSinglePulseAcquistion();
-
-    // check TMR0 gate status
-    if(TMR0_CheckGateValueStatus()== 0)
-        xVal = TMR0_ReadTimer();
-
-    // wait untill gate interrupt occured
-    while(TMR0GIF == 0)
-    {
-    }
-
-    yVal = TMR0_ReadTimer();
-    </code>
-*/
-void TMR0_StartSinglePulseAcquisition(void);
-
-/**
-  @Summary
-    Check the current state of Timer1 gate.
-
-  @Description
-    This function reads the TMR0 gate value and return it.
-    This function must be used when the TMR0 gate is enabled.
-
-  @Preconditions
-    Initialize  the TMR0 with gate enable before calling this function.
-
-  @Param
-    None
-
-  @Returns
-    None
-
-  @Example
-    <code>
-    uint16_t xVal;
-    uint16_t yVal;
-
-    // enable TMR0 singlepulse mode
-    TMR0_StartSinglePulseAcquistion();
-
-    // check TMR0 gate status
-    if(TMR0_CheckGateValueStatus()== 0)
-        xVal = TMR0_ReadTimer();
-
-    // wait untill gate interrupt occured
-    while(TMR0IF == 0)
-    {
-    }
-
-    yVal = TMR0_ReadTimer();
-    </code>
-*/
-uint8_t TMR0_CheckGateValueStatus(void);
-
-/**
-  @Summary
     Timer Interrupt Service Routine
 
   @Description
@@ -366,6 +326,24 @@ uint8_t TMR0_CheckGateValueStatus(void);
 */
 void TMR0_ISR(void);
 
+
+/**
+  @Summary
+    Timer Interrupt Service Routine
+
+  @Description
+    Timer Interrupt Clear
+
+  @Preconditions
+    Initialize  the TMR0 module with interrupt before calling this ISR.
+
+  @Param
+    None
+
+  @Returns
+    None
+*/
+void TMR0_Clear(void);
 
 #ifdef __cplusplus  // Provide C++ Compatibility
 

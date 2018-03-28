@@ -79,6 +79,12 @@ void interrupt INTERRUPT_InterruptManager (void)
     {
         CMP1_ISR();
     }
+    if(INTCONbits.TMR0IE == 1 && INTCONbits.TMR0IF == 1)
+    {
+        TMR0_ISR();
+        LED_RED_PORT = !LED_RED_PORT;
+        // Call Timer Handler
+    }
     else if(IOC_ENABLE == 1 && IOC_FLAG == 1)
     {
         IOC_FLAG = 0;

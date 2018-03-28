@@ -30,6 +30,7 @@
 
 #define TIME_BIT 104 // us, (1/9600)*1000000
 #define TIME_HALF (TIME_BIT/2) // Meio periodo do bit, para o start 1,5.
+#define TIME_ONE_AND_HALF  TIME_BIT+TIME_HALF
 
 typedef enum Status_t
 {
@@ -90,7 +91,7 @@ void InterruptPinRX(void)
 		{
 			status = START_UA;
 			// Carrega o timer com o tempo de um bit e meio para pegar a amostragem quando no meio do intervalo bit.
-			reloadTimer(TIME_HALF + TIME_BIT);
+			reloadTimer(TIME_ONE_AND_HALF);
 		}
 	}
 	// Limpar a interupção
@@ -171,15 +172,28 @@ void InterruptTimerUART(void)
 
 void clearInterruptTimerUART(void)
 {
-    
+    TMR0_Clear();
 }
 
 void reloadTimer(uint8_t setTimerValue)
 {
-    
+    switch(setTimerValue)
+    {
+        case TIME_BIT:
+            //Timer0 Registers Prescaler= 8 - TMR0 Preset = 100 - Freq = 9615.38 Hz - Period = 0.000104 seconds
+            TMR0 = 100;
+            break;
+        case TIME_ONE_AND_HALF:
+            //Timer0 Registers Prescaler= 8 - TMR0 Preset = 25 - Freq = 6493.51 Hz - Period = 0.000154 seconds
+            TMR0 = 25;
+            break;
+        default:
+            TMR0 = 0;
+            break;
+    }
 }
 
 void clearInterruptPinRX(void)
 {
-    
+    IOC_FLAG = 0;
 }

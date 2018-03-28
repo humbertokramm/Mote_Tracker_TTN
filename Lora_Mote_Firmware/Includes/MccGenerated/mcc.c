@@ -99,6 +99,7 @@ void SYSTEM_Initialize(void)
     TMR2_Initialize();
     TMR3_Initialize();
     EUSART_Initialize();
+    TMR0_Initialize();
     ADC_Initialize();
     CMP1_Initialize();
 }

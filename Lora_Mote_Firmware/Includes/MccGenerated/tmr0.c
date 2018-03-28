@@ -54,7 +54,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 /**
   Section: Global Variables Definitions
 */
-volatile uint16_t timer1ReloadVal;
+volatile uint16_t timer0ReloadVal;
 
 /**
   Section: TMR0 APIs
@@ -62,28 +62,25 @@ volatile uint16_t timer1ReloadVal;
 
 void TMR0_Initialize(void)
 {
+    
+    //Timer0 Registers Prescaler= 8 - TMR0 Preset = 25 - Freq = 6493.51 Hz - Period = 0.000154 seconds
+    T0CONbits.T0CS = 0;  // bit 5  TMR0 Clock Source Select bit...0 = Internal Clock (CLKO) 1 = Transition on T0CKI pin
+    T0CONbits.T0SE = 0;  // bit 4 TMR0 Source Edge Select bit 0 = low/high 1 = high/low
+    T0CONbits.PSA = 0;   // bit 3  Prescaler Assignment bit...0 = Prescaler is assigned to the Timer0
+    T0CONbits.T0PS2 = 0;   // bits 2-0  PS2:PS0: Prescaler Rate Select bits
+    T0CONbits.T0PS1 = 1;
+    T0CONbits.T0PS0 = 0;
+
     //Set the Timer to the options selected in the GUI
 
-    //T0OSCEN disabled; nT0SYNC synchronize; T0CKPS 1:1; TMR0CS FOSC/4; TMR0ON disabled; 
-    T0CON = 0x00;
-
-    //T0GVAL disabled; T0GSPM disabled; T0GSS T0G; T0GTM disabled; T0GPOL low; T0GGO_nDONE done; TMR0GE disabled; 
-    T0GCON = 0x00;
-
-    //TMR0H 208;
-    TMR0H = 0xD0;
-
-    //TMR0L 00;
-    TMR0L = 0x20;
-
     // Load the TMR value to reload variable
-    timer1ReloadVal=(TMR0H << 8) | TMR0L;
+    timer0ReloadVal=100;
 
     // Clearing IF flag before enabling the interrupt.
-    PIR1bits.TMR0IF = 0;
+    INTCONbits.TMR0IF = 0;
 
     // Enabling TMR0 interrupt.
-    PIE1bits.TMR0IE = 1;
+    INTCONbits.TMR0IE = 1;
 
     // Start TMR0
     TMR0_StartTimer();
@@ -101,64 +98,50 @@ void TMR0_StopTimer(void)
     T0CONbits.TMR0ON = 0;
 }
 
-uint16_t TMR0_ReadTimer(void)
+uint8_t TMR0_ReadTimer(void)
 {
-    uint16_t readVal;
+    uint8_t readVal;
 
-    readVal = (TMR0H << 8) | TMR0L;
+    readVal = TMR0;
 
-    return readVal;
+    return TMR0;
 }
 
-void TMR0_WriteTimer(uint16_t timerVal)
+void TMR0_WriteTimer(uint8_t timerVal)
 {
-    if (T0CONbits.nT0SYNC == 1)
-    {
-        // Stop the Timer by writing to TMRxON bit
-        T0CONbits.TMR0ON = 0;
+    // Write to the Timer0 register
+    TMR0 = timerVal;
+}
 
-        // Write to the Timer1 register
-        TMR0H = (timerVal >> 8);
-        TMR0L = timerVal;
-
-        // Start the Timer after writing to the register
-        T0CONbits.TMR0ON =1;
-    }
-    else
-    {
-        // Write to the Timer1 register
-        TMR0H = (timerVal >> 8);
-        TMR0L = timerVal;
-    }
+void TMR0_SetReload(uint8_t timerVal)
+{
+    // Write to the timer0ReloadVal var
+    timer0ReloadVal = timerVal;
 }
 
 void TMR0_Reload(void)
 {
-    //Write to the Timer1 register
-    TMR0H = (timer1ReloadVal >> 8);
-    TMR0L = timer1ReloadVal;
+    //Write to the Timer0 register
+    TMR0 = timer0ReloadVal;
 }
 
-void TMR0_StartSinglePulseAcquisition(void)
-{
-    T0GCONbits.T0GGO_nDONE = 1;
-}
-
-uint8_t TMR0_CheckGateValueStatus(void)
-{
-    return (T0GCONbits.T0GVAL);
-}
 
 void TMR0_ISR(void)
 {
 
     // Clear the TMR0 interrupt flag
-    PIR1bits.TMR0IF = 0;
+    INTCONbits.TMR0IF = 0;
 
-    TMR0H = (timer1ReloadVal >> 8);
-    TMR0L = timer1ReloadVal;
+    TMR0 = timer0ReloadVal;
 
     // Add your TMR0 interrupt custom code
+    
+}
+
+void TMR0_Clear(void)
+{
+    // Clear the TMR0 interrupt flag
+    INTCONbits.TMR0IF = 0;
 }
 
 /**
