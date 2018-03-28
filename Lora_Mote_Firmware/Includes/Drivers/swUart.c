@@ -35,7 +35,7 @@
 typedef enum Status_t
 {
 	SILENT,
-	START_UA,
+	//START_UA,
 	N_BIT,
 	PARITY,
 	STOP_UA
@@ -89,9 +89,17 @@ void InterruptPinRX(void)
 	{
 		if(SW_UART_RX_PORT == 0)
 		{
-			status = START_UA;
+			//status = START_UA;
 			// Carrega o timer com o tempo de um bit e meio para pegar a amostragem quando no meio do intervalo bit.
 			reloadTimer(TIME_ONE_AND_HALF);
+            
+            // Inicializa estado para dar entrada nos bits.
+			status = N_BIT;
+			countBitsSilent = 0;
+			n_bit = 0;
+			cs = 0;
+			rx_data = 0;
+			status = N_BIT;
 		}
 	}
 	// Limpar a interupção
@@ -104,19 +112,20 @@ void InterruptTimerUART(void)
 	
 	switch(status)
 	{
-	case SILENT: // Quanto a linha ficar em silêncio por 2 bit frame chama ReadyByteFrame.
-	if(countBitsSilent ==  ( NUM_BITS_SILENT - 1 ) )
-	{
-		ReadyByteFrame(buffer_rx, countRX);
-		// Apronta para a próxima recepção de bytes.
-		countRX = 0;
-	}
-	if(countBitsSilent < NUM_BITS_SILENT)
-	{
-		countBitsSilent ++;
-		reloadTimer(TIME_BIT);
-	}
+	case SILENT: // Quanto a linha ficar em silêncio por 2 byte-frame chama ReadyByteFrame.
+		if(countBitsSilent ==  ( NUM_BITS_SILENT - 1 ) )
+		{
+			ReadyByteFrame(buffer_rx, countRX);
+			// Prepara a próxima recepção de bytes.
+			countRX = 0;
+		}
+		if(countBitsSilent < NUM_BITS_SILENT)
+		{
+			countBitsSilent ++;
+			reloadTimer(TIME_BIT);
+		}
 	break;
+    /*
 	case START_UA:
 		countBitsSilent = 0;
 		n_bit = 0;
@@ -125,6 +134,7 @@ void InterruptTimerUART(void)
 		status = N_BIT;
 		reloadTimer(TIME_BIT);
 	break;
+     */
 	case N_BIT:
 		mask = 0x01 << n_bit;
 		// Seta o bit recebido
@@ -146,7 +156,7 @@ void InterruptTimerUART(void)
 		reloadTimer(TIME_BIT);
 	break;
 	case PARITY:
-		// Deve Usar cs para fazer a verificação da paridade com o bit recebido
+		// Deve Usar cs para a verificação da paridade com o bit recebido
 		// No caso pode ser negligenciado no momento
 		if( SW_UART_RX_PORT == 0 )
 		{}
@@ -181,7 +191,7 @@ void reloadTimer(uint8_t setTimerValue)
     {
         case TIME_BIT:
             //Timer0 Registers Prescaler= 8 - TMR0 Preset = 100 - Freq = 9615.38 Hz - Period = 0.000104 seconds
-            TMR0 = 100;
+            TMR0 = 93;//100;
             break;
         case TIME_ONE_AND_HALF:
             //Timer0 Registers Prescaler= 8 - TMR0 Preset = 25 - Freq = 6493.51 Hz - Period = 0.000154 seconds

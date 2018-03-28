@@ -74,7 +74,7 @@ void TMR0_Initialize(void)
     //Set the Timer to the options selected in the GUI
 
     // Load the TMR value to reload variable
-    timer0ReloadVal=100;
+    timer0ReloadVal=110;
 
     // Clearing IF flag before enabling the interrupt.
     INTCONbits.TMR0IF = 0;
