@@ -89,10 +89,10 @@ void interrupt INTERRUPT_InterruptManager (void)
     {
         IOC_FLAG = 0;
         
-        if(SW_UART_RX_IOC == 1)
-        {
+        //if(SW_UART_RX_IOC == 1)
+        //{
             //SW_EUSART_Receive_ISR();
-            InterruptPinRX();
+           // InterruptPinRX();
             LED_RED_PORT = !LED_RED_PORT;
             /*
             if(SW_UART_RX_PORT) 
@@ -104,7 +104,7 @@ void interrupt INTERRUPT_InterruptManager (void)
                 LED_RED_PORT = LED_OFF;
             }
              */
-        }
+        //}
     }
     else
     {
