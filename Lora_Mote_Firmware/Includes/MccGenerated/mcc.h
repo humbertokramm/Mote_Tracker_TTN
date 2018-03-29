@@ -55,6 +55,8 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include "eusart.h"
 #include "interrupt_manager.h"
 #include "spi.h"
+#include "swUart.h"
+#include "tmr0.h"
 #include "tmr1.h"
 #include "tmr2.h"
 #include "tmr3.h"

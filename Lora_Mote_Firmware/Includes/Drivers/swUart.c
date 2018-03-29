@@ -10,6 +10,7 @@
 #include "swUart.h"
 #include "stdint.h"
 #include "HardwareProfile.h"
+#include "tmr0.h"
 
 // Número de bits do data format
 #define NUM_BITS 8
@@ -192,12 +193,12 @@ void reloadTimer(uint8_t setTimerValue)
         case TIME_BIT:
             //Timer0 Registers Prescaler= 8 - TMR0 Preset = 100 - Freq = 9615.38 Hz - Period = 0.000104 seconds
             //Por aferição será usado 110
-            TMR0 = 110;//100;
+            TMR0 = 238;// 57600 //110;//100;
             break;
         case TIME_ONE_AND_HALF:
             //Timer0 Registers Prescaler= 8 - TMR0 Preset = 25 - Freq = 6493.51 Hz - Period = 0.000154 seconds
             //Por aferição será usado 34
-            TMR0 = 34;//25;
+            TMR0 = 229; //34;//25;
             break;
         default:
             TMR0 = 0;

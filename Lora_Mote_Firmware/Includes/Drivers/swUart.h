@@ -16,4 +16,6 @@ void clearInterruptTimerUART(void);
 void reloadTimer(uint8_t setTimerValue);
 void clearInterruptPinRX(void);
 
+void InitSwUart(void);
+
 #endif

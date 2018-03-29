@@ -90,6 +90,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 
 #include "mcc.h"
 
+
 void SYSTEM_Initialize(void)
 {
     OSCILLATOR_Initialize();
@@ -102,6 +103,9 @@ void SYSTEM_Initialize(void)
     TMR0_Initialize();
     ADC_Initialize();
     CMP1_Initialize();
+    
+    InitSwUart();
+    
 }
 
 void OSCILLATOR_Initialize(void)

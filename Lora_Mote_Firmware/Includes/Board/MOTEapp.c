@@ -57,6 +57,8 @@
 #include "SSD1306oLED.h"
 #include "memory.h"
 
+#include "mcc.h"
+
 typedef enum {moteStartup, moteReset, moteJoinMethod, moteCheckAbp, moteWaitAbp, moteCheckOtaa, moteWaitOtaa, moteJoined, moteGetDr, /*moteGetDr, moteSetAdr, moteSetDr, moteDoneDr, */moteNeedKeys, moteComFailure} MOTE_T;
 MOTE_T  activeState = moteStartup;
 
@@ -1454,4 +1456,9 @@ uint8_t moteApp_lightStringSize (void)
 uint8_t* moteApp_getLightString(void)
 {   
     return &storedLight;
+}
+
+void ReadyByteFrame(int8_t* buffer_rx, uint8_t numBytes)
+{
+    oled_putUint8(buffer_rx[0],10,1);
 }
