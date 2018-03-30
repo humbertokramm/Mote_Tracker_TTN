@@ -132,7 +132,8 @@ void TMR0_ISR(void)
     // Clear the TMR0 interrupt flag
     INTCONbits.TMR0IF = 0;
 
-    TMR0 = timer0ReloadVal;
+    //TMR0 = timer0ReloadVal;
+    
 
     // Add your TMR0 interrupt custom code
     

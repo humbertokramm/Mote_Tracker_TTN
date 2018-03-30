@@ -11,6 +11,7 @@
 #include "stdint.h"
 #include "HardwareProfile.h"
 #include "tmr0.h"
+#include "SSD1306oLED.h"
 
 // Número de bits do data format
 #define NUM_BITS 8
@@ -29,10 +30,15 @@
 
 // Tempo para o bitrate, em micro segundos
 
-#define TIME_BIT 104 // us, (1/9600)*1000000
-#define TIME_HALF (TIME_BIT/2) // Meio periodo do bit, para o start 1,5.
-#define TIME_ONE_AND_HALF  TIME_BIT+TIME_HALF
+//Timer0 Registers Prescaler= 8 - TMR0 Preset = 100 - Freq = 9615.38 Hz - Period = 0.000104
+//Por aferição será usado 110
+#define TIME_BIT 110 //104us, (1/9600)*1000000
 
+#define TIME_HALF (TIME_BIT/2) // Meio periodo do bit, para o start 1,5.
+//Timer0 Registers Prescaler= 8 - TMR0 Preset = 25 - Freq = 6493.51 Hz - Period = 0.000154 seconds
+//Por aferição será usado 34
+#define TIME_ONE_AND_HALF  34 //TIME_BIT+TIME_HALF
+/******************************************************************************/
 typedef enum Status_t
 {
 	SILENT,
@@ -65,7 +71,7 @@ uint8_t buffer_rx[NUM_BUFFER_RX];
 uint8_t cs;
 uint8_t countRX;
 uint8_t countBitsSilent;
-
+/******************************************************************************/
 void InitSwUart()
 {
 	status = SILENT; 
@@ -80,19 +86,21 @@ void InitSwUart()
 	// Interrupção Timer RX;
 	
 }
-
-
+/******************************************************************************/
 // Interrupção da porta de RX
 // Ocorre quando sinal transitar de nível alto para nível baixo, Edge Fall.
+/******************************************************************************/
 void InterruptPinRX(void)
 {
+    
 	if(status == SILENT)
 	{
 		if(SW_UART_RX_PORT == 0)
 		{
 			//status = START_UA;
 			// Carrega o timer com o tempo de um bit e meio para pegar a amostragem quando no meio do intervalo bit.
-			reloadTimer(TIME_ONE_AND_HALF);
+			TMR0_StartTimer();
+            reloadTimer(TIME_ONE_AND_HALF);
             
             // Inicializa estado para dar entrada nos bits.
 			//status = N_BIT; //redundante
@@ -106,17 +114,20 @@ void InterruptPinRX(void)
 	// Limpar a interupção
 	clearInterruptPinRX();
 }
-
+/******************************************************************************/
 void InterruptTimerUART(void)
 {
 	uint8_t mask;
-	
+	LED_RED_PORT = !LED_RED_PORT;
 	switch(status)
 	{
 	case SILENT: // Quanto a linha ficar em silêncio por 2 byte-frame chama ReadyByteFrame.
 		if(countBitsSilent ==  ( NUM_BITS_SILENT - 1 ) )
 		{
+            TMR0_StopTimer();
+            oled_clear();
 			ReadyByteFrame(buffer_rx, countRX);
+            
 			// Prepara a próxima recepção de bytes.
 			countRX = 0;
 		}
@@ -185,10 +196,11 @@ void clearInterruptTimerUART(void)
 {
     TMR0_Clear();
 }
-
+/******************************************************************************/
 void reloadTimer(uint8_t setTimerValue)
 {
-    switch(setTimerValue)
+    TMR0 = setTimerValue;
+   /* switch(setTimerValue)
     {
         case TIME_BIT:
             //Timer0 Registers Prescaler= 8 - TMR0 Preset = 100 - Freq = 9615.38 Hz - Period = 0.000104 seconds
@@ -203,10 +215,24 @@ void reloadTimer(uint8_t setTimerValue)
         default:
             TMR0 = 0;
             break;
-    }
+    }*/
 }
-
+/******************************************************************************/
 void clearInterruptPinRX(void)
 {
+    bool tClearPin;
+    //Limpa o Interrupt On Change
     IOC_FLAG = 0;
+    //Faz uma leitura do Pin para limpar o IOC
+    tClearPin = SW_UART_RX_PORT;
 }
+/******************************************************************************/
+void printfOled(char value)
+{
+    static char lastValue;
+    if(lastValue == value) return;
+    lastValue = value;
+    oled_clear();
+    oled_putString(value,0,0);
+}
+/******************************************************************************/
