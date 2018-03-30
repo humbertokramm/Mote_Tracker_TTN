@@ -4,9 +4,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/hkramm/Documents/GitHub/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/Drivers/swUart.c</file>
-            <file>file:/C:/Users/hkramm/Documents/GitHub/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/MccGenerated/interrupt_manager.c</file>
-            <file>file:/C:/Users/hkramm/Documents/GitHub/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/Board/MOTEapp.c</file>
+            <file>file:/E:/Firmwares/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/Drivers/swUart.c</file>
+            <file>file:/E:/Firmwares/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/MccGenerated/interrupt_manager.c</file>
+            <file>file:/E:/Firmwares/Mote_Tracker_TTN/Lora_Mote_Firmware/Includes/Board/HardwareProfile.h</file>
         </group>
     </open-files>
 </project-private>
