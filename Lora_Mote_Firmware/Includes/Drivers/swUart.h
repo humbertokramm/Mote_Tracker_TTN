@@ -15,7 +15,7 @@ void InterruptTimerUART(void);
 void clearInterruptTimerUART(void);
 void reloadTimer(uint8_t setTimerValue);
 void clearInterruptPinRX(void);
-void printfOled(char value);
+void printfOled(int8_t* buffer_rx, uint8_t numBytes);
 
 void InitSwUart(void);
 

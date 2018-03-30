@@ -126,7 +126,9 @@ void InterruptTimerUART(void)
 		{
             TMR0_StopTimer();
             oled_clear();
-			ReadyByteFrame(buffer_rx, countRX);
+			//ReadyByteFrame(buffer_rx, countRX);
+            *(buffer_rx + countRX) = 0;
+            printfOled(buffer_rx, countRX);
             
 			// Prepara a próxima recepção de bytes.
 			countRX = 0;
@@ -227,12 +229,9 @@ void clearInterruptPinRX(void)
     tClearPin = SW_UART_RX_PORT;
 }
 /******************************************************************************/
-void printfOled(char value)
+void printfOled(int8_t* buffer_rx, uint8_t numBytes)
 {
-    static char lastValue;
-    if(lastValue == value) return;
-    lastValue = value;
     oled_clear();
-    oled_putString(value,0,0);
+    oled_putString(buffer_rx,0,0);
 }
 /******************************************************************************/

@@ -88,28 +88,14 @@ void interrupt INTERRUPT_InterruptManager (void)
     }
     else if(IOC_ENABLE == 1 && IOC_FLAG == 1)
     {
-        //bool tClearPin;
+        bool tClearPin;
         //Limpa o Interrupt On Change
-        //IOC_FLAG = 0;
+        IOC_FLAG = 0;
         //Faz uma leitura do Pin para limpar o IOC
-        //tClearPin = SW_UART_RX_PORT;
+        tClearPin = SW_UART_RX_PORT;
         
-        //if(SW_UART_RX_IOC == 1)
-        //{
-            //SW_EUSART_Receive_ISR();
-            InterruptPinRX();
-            //LED_RED_PORT = !LED_RED_PORT;
-            /*
-            if(SW_UART_RX_PORT) 
-            {
-                LED_RED_PORT = LED_ON;
-            }
-            else 
-            {
-                LED_RED_PORT = LED_OFF;
-            }
-             */
-        //}
+        //Tratamento da Interrupão
+        InterruptPinRX();
     }
     else
     {
