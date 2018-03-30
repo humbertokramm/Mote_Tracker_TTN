@@ -100,7 +100,9 @@ void InterruptPinRX(void)
 			//status = START_UA;
 			// Carrega o timer com o tempo de um bit e meio para pegar a amostragem quando no meio do intervalo bit.
 			TMR0_StartTimer();
+            LED_RED_PORT = !LED_RED_PORT;
             reloadTimer(TIME_ONE_AND_HALF);
+            
             
             // Inicializa estado para dar entrada nos bits.
 			//status = N_BIT; //redundante
@@ -118,7 +120,7 @@ void InterruptPinRX(void)
 void InterruptTimerUART(void)
 {
 	uint8_t mask;
-	LED_RED_PORT = !LED_RED_PORT;
+	
 	switch(status)
 	{
 	case SILENT: // Quanto a linha ficar em silêncio por 2 byte-frame chama ReadyByteFrame.
@@ -150,6 +152,7 @@ void InterruptTimerUART(void)
 	break;
      */
 	case N_BIT:
+        LED_RED_PORT = !LED_RED_PORT;
 		mask = 0x01 << n_bit;
 		// Seta o bit recebido
 		if( SW_UART_RX_PORT == 1 )
@@ -165,11 +168,12 @@ void InterruptTimerUART(void)
 		n_bit ++;
 		if( n_bit == NUM_BITS )
 		{
-			status = PARITY;
+			status = STOP_UA;//PARITY;
 		}
 		reloadTimer(TIME_BIT);
 	break;
 	case PARITY:
+        LED_RED_PORT = !LED_RED_PORT;
 		// Deve Usar cs para a verificação da paridade com o bit recebido
 		// No caso pode ser negligenciado no momento
 		if( SW_UART_RX_PORT == 0 )
@@ -180,6 +184,7 @@ void InterruptTimerUART(void)
 		reloadTimer(TIME_BIT);
 	break;
 	case STOP_UA:
+        LED_RED_PORT = !LED_RED_PORT;
 		buffer_rx[countRX] = rx_data;
 		countRX ++;
 		status = SILENT;
@@ -231,7 +236,20 @@ void clearInterruptPinRX(void)
 /******************************************************************************/
 void printfOled(int8_t* buffer_rx, uint8_t numBytes)
 {
+#define MAX_COL 16
+#define MAX_LINHA 4
+
+    uint8_t tempBuffer[MAX_COL],i,j;
     oled_clear();
-    oled_putString(buffer_rx,0,0);
+
+    for(j=0;j<MAX_LINHA;j++)
+    {
+        for(i=0;i<MAX_COL;i++)
+        {
+            if(numBytes > (i + j*16) )tempBuffer[i]= *(buffer_rx + i + j*16);
+            else tempBuffer[i] = 0;
+        }
+        oled_putString(tempBuffer,0,j);
+    }
 }
 /******************************************************************************/
