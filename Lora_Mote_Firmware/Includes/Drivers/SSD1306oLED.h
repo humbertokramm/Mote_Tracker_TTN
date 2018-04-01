@@ -98,6 +98,8 @@ void oled_putChar(char k,uint8_t station_dot, uint8_t start_page);
 
 void oled_putString(const char *string, uint8_t station_dot, uint8_t start_page);
 
+void oled_putStringLineN(const char *string);
+
 void oled_putUint8(uint8_t number, uint8_t station_dot, uint8_t start_page);
 
 void oled_putint8(uint8_t number, uint8_t station_dot, uint8_t start_page);

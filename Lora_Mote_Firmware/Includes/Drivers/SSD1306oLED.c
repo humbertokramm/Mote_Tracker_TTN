@@ -328,6 +328,29 @@ void oled_putChar(char k,uint8_t station_dot, uint8_t start_page)
     }
 }
 
+void oled_putStringLineN(const char *string)
+{
+    uint8_t index;
+    uint8_t indexLine;
+    uint8_t page;
+    
+    for(index = 0;; index++)
+    {
+        if (*string != 0)
+        {        
+            page =  index / INDEX_MAX;
+            indexLine = index % INDEX_MAX; 
+            
+            oled_putChar(*string, indexLine, page);
+            *string++;
+        }
+        else
+        {
+            break;
+        }
+    }
+}
+
 void oled_putString(const char *string, uint8_t station_dot, uint8_t start_page)
 {
     uint8_t index;

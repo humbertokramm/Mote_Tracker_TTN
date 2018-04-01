@@ -70,8 +70,20 @@ static uint8_t responseData[32];
 static bool responseReady = false;
 static MOTE_MODE_T moteState = MOTE_STARTUP;
 
-typedef enum {runningEnter, runningSensor, runningSensorMenu, runningDataRateDisplay, runningDataRateSelect, runningSensorDisplay, runningUplink, runningUplinkSelect, runningUplinkTransmit, runningPortNumber, runningDownlink, runningDownlinkDisplay, runningMenuTimeout, runningPeriodicWakeUpLength, /* runningPeriodic, */runningPeriodicDisplay, runningSleep} MOTE_RUNNING_T;
+typedef enum {runningEnter, runningSensor, runningSensorMenu, runningDataRateDisplay, runningDataRateSelect, runningSensorDisplay, 
+        runningUplink, runningUplinkSelect, runningUplinkTransmit, runningPortNumber, runningDownlink, 
+        runningDownlinkDisplay, runningMenuTimeout, runningPeriodicWakeUpLength, 
+        /* runningPeriodic, */runningPeriodicDisplay, runningSleep} MOTE_RUNNING_T;
 MOTE_RUNNING_T  runningState = runningEnter;
+
+typedef enum 
+{
+    SSFG_BEBIN,
+    SSFG_SENTENCE,
+    SSFG_GET_DATA,
+    SSFG_CHECK,
+}STATUS_SEARCH_FRAME_GPS_T;
+STATUS_SEARCH_FRAME_GPS_T statusSSFG = SSFG_BEBIN; 
 
 static void EndLine(void);
 static void sendCommand(const char *);
@@ -99,6 +111,8 @@ uint8_t moteApp_lightStringSize (void);
 uint8_t* moteApp_getLightString(void);
 
 void MOTEapp_SetDataRateSetting(uint8_t);
+
+void moteApp_searchFrameGPS(void);
 
 #define COM_RETRY_ATTEMPTS  10
 static uint8_t appDevEui[16];
@@ -130,6 +144,12 @@ static uint8_t sleepTicker = 0;
 
 typedef enum {rn2483, rn2903} RN_T;
 static RN_T rnModule = rn2483;
+
+#define NUM_BYTES_SENTENCE_NAME 5
+const uint8_t sentenceName[] = {'G','P','G','L','L'};
+uint8_t countSearchFrameGPS;
+static uint8_t dataFrameGPS[200];
+
 
 void moduleResync(void)
 {
@@ -192,6 +212,11 @@ MOTE_MODE_T moteHandler(void)
     bool s2Button = false;
     bool readMessage = false;
     buttonStates_t buttonPress = Released;
+    
+    
+    
+    // Busca pela  entradas do GPS pela serial.
+    moteApp_searchFrameGPS();
 
     // Check USB connection state
     if (USB_DET_PORT)
@@ -1458,7 +1483,156 @@ uint8_t* moteApp_getLightString(void)
     return &storedLight;
 }
 
-void ReadyByteFrame(int8_t* buffer_rx, uint8_t numBytes)
+void ReadyByteFrame()
 {
-    oled_putUint8(buffer_rx[0],10,1);
-}
+    /*
+    uint8_t i;
+    uint8_t ok;
+    uint8_t val;
+    
+    if(silentRX() == true)
+    {
+        if(emptyFIFO() != true)
+        {
+            i = 0;
+            ok = true;
+            while(emptyFIFO() != true)
+            {
+                val = outFIFO();
+                if(val != 'Z')
+                {
+                    ok = false;
+                }
+            }
+            
+            if( ok == true )
+            {
+                dataFrameGPS[0] = 'O';
+                dataFrameGPS[1] = 'K';
+                dataFrameGPS[2] = 0;
+            }
+            else
+            {
+                dataFrameGPS[0] = 'N';
+                dataFrameGPS[1] = 'O';
+                dataFrameGPS[2] = 'K';
+                dataFrameGPS[3] = 0;
+            }                        
+            oled_clear();
+            oled_putStringLineN(dataFrameGPS);
+            //oled_putString(buffer_rx,0,0);
+            //oled_putUint8(buffer_rx[0], 10, 1);
+        }
+      */
+    }
+    
+    void moteApp_searchFrameGPS(void)
+    {
+        uint8_t c;
+        uint8_t i, cs, ccs;
+        
+        switch(statusSSFG)
+        {
+            // Progura polo caracter de marcação de início, no caso "$".
+            case SSFG_BEBIN:
+                while(emptyFIFO() != true)
+                {
+                    c = outFIFO();
+                    if( c == '$')
+                    {
+                        countSearchFrameGPS = 0;
+                        statusSSFG = SSFG_SENTENCE;
+                    }
+                }
+                if(statusSSFG != SSFG_SENTENCE)
+                {
+                    break;
+                }
+            // Procura pelo nome da sentença "GPGLL - Geographic Position, Latitude/Longitude".    
+            case SSFG_SENTENCE:
+                while(emptyFIFO() != true)
+                {
+                    c = outFIFO();
+                    if( c == sentenceName[countSearchFrameGPS] )
+                    {
+                        countSearchFrameGPS++;
+                        if( countSearchFrameGPS == NUM_BYTES_SENTENCE_NAME ) 
+                        {
+                            countSearchFrameGPS = 0;
+                            statusSSFG = SSFG_GET_DATA;
+                        }
+                    }
+                    else
+                    {
+                        statusSSFG = SSFG_BEBIN;
+                        break;
+                    }
+                }
+                if(statusSSFG != SSFG_GET_DATA)
+                {
+                    break;
+                }
+                break;
+            case SSFG_GET_DATA:
+                while(emptyFIFO() != true)
+                {
+                    c = outFIFO();
+                    if(c == '\r')
+                    {
+                        dataFrameGPS[countSearchFrameGPS] = 0;
+                        statusSSFG = SSFG_CHECK;
+                    }
+                    else
+                    {
+                        dataFrameGPS[countSearchFrameGPS] = c;
+                        countSearchFrameGPS ++;
+                    }
+                }
+                if(statusSSFG != SSFG_CHECK)
+                {
+                    break;
+                }
+            case SSFG_CHECK:
+                i = 0;
+                cs = 0;
+                
+                cs ^= 'G';
+                cs ^= 'P';
+                cs ^= 'G';
+                cs ^= 'L';
+                cs ^= 'L';
+                
+                while(1)
+                {
+                    if(i >= countSearchFrameGPS)
+                    {
+                        break;
+                    }
+                    if(dataFrameGPS[i] == '*')
+                    {
+                        ccs = unhex(dataFrameGPS[i + 1])*16;
+                        ccs += unhex(dataFrameGPS[i + 2]);
+                        countSearchFrameGPS = i;
+                        dataFrameGPS[i] = 0;
+                        break;
+                    }
+                    else
+                    {
+                        cs ^= dataFrameGPS[i];
+                        i++;
+                    }
+                }
+                oled_clear();
+                if(cs == ccs)
+                {
+                    oled_putStringLineN(dataFrameGPS);
+                }
+                else
+                {
+                    countSearchFrameGPS = 0;
+                    oled_putint8(ccs, 0, 0);
+                }
+                statusSSFG = SSFG_BEBIN;
+                break;
+        }
+    }

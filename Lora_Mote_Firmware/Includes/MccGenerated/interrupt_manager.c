@@ -55,6 +55,9 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 
 void interrupt INTERRUPT_InterruptManager (void)
 {
+    
+    uint8_t aux;
+    
    // interrupt handler
     if(PIE1bits.TMR1IE == 1 && PIR1bits.TMR1IF == 1)
     {
