@@ -88,6 +88,7 @@ STATUS_SEARCH_FRAME_GPS_T statusSSFG = SSFG_BEBIN;
 static void EndLine(void);
 static void sendCommand(const char *);
 static void sendDataCommand(const char *string, uint8_t*, uint8_t);
+static void _sendDataCommand(const char *string, uint8_t*, uint8_t);
 static void sendSetCommand(uint8_t*);
 static MOTE_T moteJoiningProcess(bool, bool, bool);
 static MOTE_RUNNING_T moteRunningProcess(bool, bool, bool, bool);
@@ -148,6 +149,7 @@ static RN_T rnModule = rn2483;
 #define NUM_BYTES_SENTENCE_NAME 5
 const uint8_t sentenceName[] = {'G','P','G','L','L'};
 uint8_t countSearchFrameGPS;
+uint8_t lengthDataGPS = 0;
 static uint8_t dataFrameGPS[200];
 
 
@@ -507,7 +509,7 @@ static MOTE_T moteJoiningProcess(bool messageReady, bool changeStates, bool sele
 }
 
 static uint8_t dotCount = 0;
-static uint8_t dataBuffer[16];
+static uint8_t dataBuffer[100];
 static uint8_t dataRatePosition = 0;
 static uint8_t dataRateSelection = 2;
 
@@ -557,8 +559,29 @@ static MOTE_RUNNING_T moteRunningProcess(bool changeStates, bool selectButton, b
             // Prepare DataBuffer for Tx
             moteApp_add8bToDataBuffer(randomPortNum, 0);
             dataBuffer[3] = 0x20;
-            NOP();
-            sendDataCommand("mac tx uncnf ", dataBuffer, 12);
+            
+            
+            if(lengthDataGPS)
+            {
+                for(uint8_t i = 0; i < lengthDataGPS; i++ )
+                {
+                    dataBuffer[4 + i] = dataFrameGPS[i];
+                }
+                sendDataCommand("mac tx uncnf ", dataBuffer, lengthDataGPS+4);
+            }
+            else
+            {
+                dataBuffer[4] = 'E';
+                dataBuffer[5] = 'R';    
+                dataBuffer[6] = 'R';
+                dataBuffer[7] = 'O';
+                dataBuffer[8] = 'R';
+                dataBuffer[9] = '-';
+                dataBuffer[10] = 'C';
+                dataBuffer[11] = 'S';
+                sendDataCommand("mac tx uncnf ", dataBuffer, 12);
+            }
+            
             secTicker = SleepTimeOut - (SleepTimeOut / 3);
             runningState = runningUplinkTransmit;
         }
@@ -642,12 +665,49 @@ static MOTE_RUNNING_T moteRunningProcess(bool changeStates, bool selectButton, b
         case runningUplinkSelect:
             if (changeStates)
             {
-                sendDataCommand("mac tx uncnf ", dataBuffer, 12);
-                
+                if(lengthDataGPS)
+                {
+                    for(uint8_t i = 0; i < lengthDataGPS; i++ )
+                    {
+                        dataBuffer[4 + i] = dataFrameGPS[i];
+                    }
+                    sendDataCommand("mac tx uncnf ", dataBuffer, lengthDataGPS+4);
+                }
+                else   
+                {
+                    dataBuffer[4] = 'E';
+                    dataBuffer[5] = 'R';
+                    dataBuffer[6] = 'R';
+                    dataBuffer[7] = 'O';
+                    dataBuffer[8] = 'R';
+                    dataBuffer[9] = '-';
+                    dataBuffer[10] = 'C';
+                    dataBuffer[11] = 'S';
+                    sendDataCommand("mac tx uncnf ", dataBuffer, 12);
+                }
             }
             if (selectButton)
             {
-                sendDataCommand("mac tx cnf ", dataBuffer, 12);
+                if(lengthDataGPS)
+                {
+                    for(uint8_t i = 0; i < lengthDataGPS; i++ )
+                    {
+                        dataBuffer[4 + i] = dataFrameGPS[i];
+                    }
+                    sendDataCommand("mac tx cnf ", dataBuffer, lengthDataGPS+4);
+                }
+                else
+                {
+                    dataBuffer[4] = 'E';
+                    dataBuffer[5] = 'R';
+                    dataBuffer[6] = 'R';
+                    dataBuffer[7] = 'O';
+                    dataBuffer[8] = 'R';
+                    dataBuffer[9] = '-';
+                    dataBuffer[10] = 'C';
+                    dataBuffer[11] = 'S';
+                    sendDataCommand("mac tx cnf ", dataBuffer, 12);
+                }
             }
 
             if ( (changeStates) || (selectButton) )
@@ -1146,6 +1206,28 @@ static void sendCommand(const char *string)
     EndLine();   
 }
 
+static void _sendDataCommand(const char *string, uint8_t* appData, uint8_t dataLength)
+{
+    // String
+    while (*string)
+    {
+        EUSART_Write(*string++);
+    }
+    // Port No & space
+    for (uint8_t byteCount = 0; byteCount < 3; byteCount++)
+    {
+        EUSART_Write(appData[byteCount]);
+    }
+    //Space
+    EUSART_Write(appData[3]);
+    //Data
+    for (uint8_t byteCount = 4; byteCount < dataLength; byteCount++)
+    {
+        EUSART_Write(appData[byteCount]);
+    }
+    EndLine();
+}
+
 static void sendDataCommand(const char *string, uint8_t* appData, uint8_t dataLength)
 {
     // String
@@ -1612,7 +1694,7 @@ void ReadyByteFrame()
                     {
                         ccs = unhex(dataFrameGPS[i + 1])*16;
                         ccs += unhex(dataFrameGPS[i + 2]);
-                        countSearchFrameGPS = i;
+                        lengthDataGPS = i;
                         dataFrameGPS[i] = 0;
                         break;
                     }
@@ -1629,7 +1711,7 @@ void ReadyByteFrame()
                 }
                 else
                 {
-                    countSearchFrameGPS = 0;
+                    lengthDataGPS = 0;
                     oled_putint8(ccs, 0, 0);
                 }
                 statusSSFG = SSFG_BEBIN;
